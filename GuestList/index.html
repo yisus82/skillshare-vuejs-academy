@@ -41,8 +41,15 @@
                     placeholder="Enter your name..."
                     v-model="name"
                     required
+                    :disabled="event.capacityPercentage === 100"
                   />
-                  <button type="submit" class="btn btn-primary">Submit</button>
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    :disabled="event.capacityPercentage === 100"
+                  >
+                    Submit
+                  </button>
                 </form>
               </div>
             </div>
@@ -53,13 +60,30 @@
           <div class="col-sm-12">
             <div class="card">
               <div class="card-header">
-                Attending ({{ guestNames.length }})
+                Attending ({{ event.guestNames.length }} / {{ event.capacity }})
+                <br />
+                <div class="progress">
+                  <div
+                    class="progress-bar progress-bar-striped progress-bar-animated"
+                    role="progressbar"
+                    :aria-valuenow="event.guestNames.length"
+                    :aria-valuemin="0"
+                    :aria-valuemax="event.capacity"
+                    :style="{width: event.capacityPercentage + '%'}"
+                    :class="{ 'bg-success': event.isSuccess, 'bg-warning': event.isWarning, 'bg-danger': event.isDanger }"
+                  >
+                    {{ event.capacityPercentage + '%' }}
+                  </div>
+                </div>
               </div>
               <div class="card-body">
-                <div class="bg-success rounded name-box" v-for="guestName in guestNames">
+                <div class="bg-success rounded name-box" v-for="guestName in sortedGuestNames">
                   <span class="text-light" v-text="guestName"></span>
                 </div>
-                <h4 v-if="guestNames.length === 0">No names added yet...</h4>
+                <h4 v-if="event.guestNames.length === 0">No names added yet...</h4>
+                <h4 class="text-danger" v-if="event.capacityPercentage === 100">
+                  No tickets left 😥
+                </h4>
               </div>
             </div>
           </div>
